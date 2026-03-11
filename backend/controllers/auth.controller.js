@@ -83,7 +83,7 @@ export const signup = asyncHandler(async (req, res) => {
 
 export const logout = asyncHandler(async (req, res) => {
 
-    res.clearCookie("jwt", {
+    res.clearCookie("jwt","" ,{
         httpOnly: true,
         secure: process.env.NODE_ENV !== "development",
         sameSite: "strict"
