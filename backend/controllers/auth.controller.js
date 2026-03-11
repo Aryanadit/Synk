@@ -1,6 +1,7 @@
 import User from '../models/user.model.js'
-import { ApiError, ApiResponse, asyncHandler ,
-        generateToken } from "../utils/index.js"
+import { ApiError, ApiResponse, asyncHandler , generateToken ,createWelcomeEmailTemplate } from "../utils/index.js"
+import { sendWelcomeEmail } from "../services/email.service.js";
+
 
 export const login = asyncHandler(async (req, res) => {
 
@@ -63,6 +64,12 @@ export const signup = asyncHandler(async (req, res) => {
     await newUser.save()
 
     generateToken(newUser._id, res)
+
+    await sendWelcomeEmail({
+        to: newUser.email,
+        name: newUser.fullName,
+        clientURL: process.env.CLIENT_URL
+    }).catch(err => console.log("Email failed:", err.message));
 
     return res.status(201).json(
         new ApiResponse(201, "User created Successfully", {
