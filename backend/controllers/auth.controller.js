@@ -1,5 +1,6 @@
 import User from '../models/user.model.js'
 import { ApiError, ApiResponse, asyncHandler , generateToken ,createWelcomeEmailTemplate } from "../utils/index.js"
+import { uploadMedia , deleteMedia } from '../services/media.service.js'
 import { sendWelcomeEmail } from "../services/email.service.js";
 
 
@@ -92,4 +93,39 @@ export const logout = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(200, "Logout Successful")
     )
+})
+
+export const updateProfile = asyncHandler( async( req ,res ) => {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    let newProfilePic;
+
+    if( req.file?.path){
+        newProfilePic = await uploadMedia( req.file.path , "profile-pics");
+
+        console.log("newProfilePic" , newProfilePic)
+        if (user.profilePic?.public_id) {
+            await deleteMedia(user.profilePic.public_id);
+        }
+    }
+
+    user.profilePic = {
+        url: newProfilePic.url,
+        public_id: newProfilePic.public_id
+    };
+
+    await user.save();
+
+    const safeUser = user.toObject();
+    delete safeUser.password;
+
+    return res.status(200).json(
+        new ApiResponse(200, "Profile picture updated successfully" , safeUser )
+    );
 })
