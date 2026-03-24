@@ -2,14 +2,15 @@ import "./config/env.js";
 import express from 'express'
 import cookieParser from 'cookie-parser'
 
-import protectRoute from './middlewares/protectRoute.js'
+import protectRoute from './middlewares/auth.middleware.js'
 import {errorHandler} from './middlewares/errorHandler.js'
+import { globalLimiter } from "./middlewares/rateLimiter.middleware.js";
 
 import userRoutes from "./routes/user.routers.js"
 import authRoutes from './routes/auth.routes.js'
 import messageRoutes from './routes/message.routes.js'
 
-import connectToMongoDB from './db/connectToMongoDB.js'
+import connectToMongoDB from './config/db.js'
 
 
 
@@ -17,8 +18,8 @@ import connectToMongoDB from './db/connectToMongoDB.js'
 const PORT = process.env.PORT || 5000
 const app = express()
 
+app.use(globalLimiter);
 app.use(express.json()) 
-
 app.use(cookieParser())
 
 app.use('/api/auth' , authRoutes)
