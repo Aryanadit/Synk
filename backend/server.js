@@ -21,12 +21,15 @@ const app = express()
 app.use(globalLimiter);
 app.use(express.json()) 
 app.use(cookieParser())
+app.use(errorHandler)
+
+
 
 app.use('/api/auth' , authRoutes)
 app.use("/api/messages" , protectRoute , messageRoutes)
 app.use("/api/users" , userRoutes)
 
-app.use(errorHandler)
+
 
 app.listen( PORT , () => {
     connectToMongoDB()

@@ -1,11 +1,19 @@
 import express from 'express'
-import {sendMessage , getMessages} from '../controllers/message.controller.js'
-import protectRoute from '../middlewares/auth.middleware.js'
+
+import { 
+    getAllContacts,
+    getChatPartners,
+    getMessagesByUserId,
+    sendMessage
+} from "../controllers/message.controller.js"
+
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = express.Router()
 
-router.post("/send/:id" , protectRoute , sendMessage)
-router.get("/get/:id" , protectRoute ,getMessages)
-
+router.get("/contacts", getAllContacts)
+router.get("/partners", getChatPartners)
+router.get("/user/:id", getMessagesByUserId)
+router.post("/send/:id", upload.single("image") , sendMessage)
 
 export default router
