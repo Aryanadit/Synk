@@ -1,5 +1,7 @@
 import User from '../models/user.model.js'
+
 import { ApiError, ApiResponse, asyncHandler , generateToken ,createWelcomeEmailTemplate } from "../utils/index.js"
+
 import { uploadMedia , deleteMedia } from '../services/media.service.js'
 import { sendWelcomeEmail } from "../services/email.service.js";
 
@@ -107,7 +109,11 @@ export const updateProfile = asyncHandler( async( req ,res ) => {
     let newProfilePic;
 
     if( req.file?.path){
-        newProfilePic = await uploadMedia( req.file.path , "profile-pics");
+        try {
+            newProfilePic = await uploadMedia(req.file.path, "profile-pics");
+        } catch (error) {
+            throw new ApiError(500, "Profile upload failed");
+        }
 
         console.log("newProfilePic" , newProfilePic)
         if (user.profilePic?.public_id) {
@@ -115,10 +121,13 @@ export const updateProfile = asyncHandler( async( req ,res ) => {
         }
     }
 
-    user.profilePic = {
-        url: newProfilePic.url,
-        public_id: newProfilePic.public_id
-    };
+    if (newProfilePic) {
+        user.profilePic = {
+            url: newProfilePic.url,
+            public_id: newProfilePic.public_id
+        };
+    }
+
 
     await user.save();
 

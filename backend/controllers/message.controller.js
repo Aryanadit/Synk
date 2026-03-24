@@ -1,88 +1,101 @@
 import Message from "../models/message.model.js"
-import Conversation from "../models/conversation.model.js"
 import User from "../models/user.model.js"
+
 import { asyncHandler , ApiResponse , ApiError } from "../utils/index.js"
 
+import { uploadMedia , deleteMedia } from "../services/media.service.js";
 
-export const sendMessage = asyncHandler( async(req,res) => {
-    const {id : receiverId} = req.params
+export const getAllContacts = asyncHandler( async(req , res ) => {
+    const loggedInUserId  = req.user._id ;
 
-    const receiver = await User.findById(receiverId)
-    if (!receiver) {
-        throw new ApiError(404, "Receiver not found")
-    }
+    //TODO: You might want to only return needed fields
+    const filteredUser = await User.find({ _id : { $ne : loggedInUserId }}).select("-password")
 
-    const {message} = req.body
-    if(!message?.trim() ) {
-        throw new ApiError(400 , "Message is required")
-    }
-
-    const senderId = req.user._id
-
-    if( senderId.toString() === receiverId.toString()) {
-        throw new ApiError(400 ,"You cannot send message to yourself")
-    }
-
-    let conversation = await Conversation.findOne({
-        participants : {
-            $all : [senderId , receiverId]
-        }
-    })
-
-    if( !conversation ){
-        conversation = new Conversation({
-            participants : [senderId , receiverId],
-            messages : []
-        }) 
-    }
-
-    const newMessage = new Message({
-        senderId,
-        receiverId,
-        message
-    })
-
-    await newMessage.save()
-    conversation.messages.push(newMessage._id)
-    await conversation.save()
-
-    res.status(201).json(
-        new ApiResponse(201, "Message sent successfully", newMessage)
+    return res.status(200).json(
+        new ApiResponse( 200 , "Contacts fetched successfully" , filteredUser)
     )
 
 })
 
-export const getMessages = asyncHandler( async(req,res) =>{
-    const { id : otherUserId } = req.params
+export const getMessagesByUserId = asyncHandler( async(req,res) => {
+    const {id : otherUserId } = req.params ;
+    const myId = req.user._id ; 
 
-    const otherUser = await User.findById(otherUserId)
-    if (!otherUser) {
-        throw new ApiError(404, "User not found")
-    }
-
-    const userId = req.user._id
-
-    if( !userId ){
-        throw new ApiError(401,"Unauthorized")
-    }
-
-    if( userId.toString() === otherUserId.toString() ) {
-        throw new ApiError(400,"You cannot get messages with yourself")
-    }
-
-    const conversation = await Conversation.findOne({
-        participants : { $all : [ userId , otherUserId]}
-    }).populate("messages")
-
-    if( !conversation ) {
-        return res.status(200).json(
-            new ApiResponse(200,"No messages found", [] )
-        );
-    }
-
-    const messages = conversation.messages;
+    const messages = await Message.find({
+        $or : [
+            { senderId : myId , receiverId : otherUserId} , 
+            { senderId : otherUserId , receiverId : myId}
+        ]
+    }).sort({ createdAt: 1 });
 
     return res.status(200).json(
-        new ApiResponse(200,"Messages retrieved successfully", messages )
+        new ApiResponse(
+            200 , "Message Fetched Successfully" , messages
+        )
+    )
+} )
+
+export const sendMessage = asyncHandler(async (req, res) => {
+    const { text } = req.body;
+    const { id: receiverId } = req.params;
+    const senderId = req.user._id;
+
+    let imageData;
+
+    if (req.file?.path) {
+        try {
+            imageData = await uploadMedia(req.file.path, "messages");
+        } catch (error) {
+            throw new ApiError(500, "File upload failed");
+        }
+    }
+
+    if (!text?.trim() && !imageData) {
+        throw new ApiError(400, "Empty message cannot be sent");
+    }
+
+    const receiver = await User.findById(receiverId);
+    if (!receiver) {
+        throw new ApiError(404, "Receiver not found");
+    }
+
+    // TODO: send message in real time if user is online  - socket.io
+    const newMessage = await Message.create({
+        senderId,
+        receiverId,
+        text,
+        image: imageData
+            ? {
+                url: imageData.url,
+                public_id: imageData.public_id
+            }
+            : null
+    });
+
+    return res.status(201).json(
+        new ApiResponse(201, "Message sent successfully", newMessage)
     );
 });
+
+export const getChatPartners = asyncHandler( async(req ,res ) => {
+    const loggedInUserId = req.user._id ;
+
+    const messages = await Message.find( {
+        $or : [
+            { senderId : loggedInUserId } , 
+            { receiverId : loggedInUserId } ,
+        ]
+    })
+
+    const partnerIds = [
+        ...new Set (messages.map( msg => 
+        msg.senderId.toString() === loggedInUserId.toString() ? msg.receiverId.toString() : msg.senderId.toString()
+    ))]; 
+
+    const partners = await User.find({ _id : {$in : partnerIds}}).select("-password")
+
+    //  console.log("Messages", messages);
+    return res.status(200).json(
+        new ApiResponse( 200 , "Chat Partners Fetched Successfully" , partners)
+    )
+})
