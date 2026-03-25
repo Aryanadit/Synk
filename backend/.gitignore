@@ -1,5 +1,6 @@
 node_modules/
 .env
+.env.production
 package-lock.json
 
 logs/
@@ -8,3 +9,5 @@ logs/
 .DS_Store
 
 uploads/
+
+TODO

@@ -1,19 +1,35 @@
-import './App.css'
+import { Routes, Route } from "react-router"
+import ChatPage from "./pages/ChatPage.jsx"
+import LoginPage from "./pages/LoginPage.jsx"
+import SignUpPage from "./pages/SignUpPage.jsx"
 
-function App() {
+import { useAuthStore } from './store/useAuthStore.js'
+
+export default function App() {
+
+  const authUser = useAuthStore((state) => state.authUser);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const login = useAuthStore((state) => state.login);
+
+  console.log("auth user:", authUser);
+  console.log("isLoggedIn:", isLoggedIn);
 
   return (
-    <>
-    <button className="btn btn-neutral">Neutral</button>
-    <button className="btn btn-primary">Primary</button>
-    <button className="btn btn-secondary">Secondary</button>
-    <button className="btn btn-accent">Accent</button>
-    <button className="btn btn-info">Info</button>
-    <button className="btn btn-success">Success</button>
-    <button className="btn btn-warning">Warning</button>
-    <button className="btn btn-error">Error</button>
-    </>
+    <div className="min-h-screen bg-base-100 text-base-content antialiased">
+
+      {/* temporary test button */}
+      <button className="text-sm text-base-content/70 hover:text-base-content transition">
+  Login
+</button>
+
+      <div className="h-screen w-full">
+        <Routes>
+          <Route path="/" element={<ChatPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+        </Routes>
+      </div>
+
+    </div>
   )
 }
-
-export default App

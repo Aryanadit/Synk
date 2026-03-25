@@ -1,4 +1,5 @@
 import "./config/env.js";
+import cors from "cors"
 import express from 'express'
 import cookieParser from 'cookie-parser'
 
@@ -12,15 +13,17 @@ import messageRoutes from './routes/message.routes.js'
 
 import connectToMongoDB from './config/db.js'
 
-
-
-
 const PORT = process.env.PORT || 5000
 const app = express()
 
 app.use(globalLimiter);
-app.use(express.json()) 
-app.use(cookieParser())
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true
+}));
+app.use(express.json());
+app.use(cookieParser());
+
 
 app.use('/api/auth' , authRoutes)
 app.use("/api/messages" , protectRoute , messageRoutes)

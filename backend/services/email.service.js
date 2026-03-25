@@ -1,18 +1,47 @@
 import { resend , sender} from "../config/resend.js";
-import { ApiError , createWelcomeEmailTemplate} from "../utils/index.js";
+import { createWelcomeEmailTemplate ,
+    //forgotPasswordEmailTemplate 
+} from "../utils/index.js";
 
-export const sendWelcomeEmail = async ({ to, name, clientURL }) => {
-    const { data , error } = await resend.emails.send({
-        from : `${sender.name} <${sender.email}>`,
+const sendEmail = async ({ to, subject, html }) => {
+    const { data, error } = await resend.emails.send({
+        from: `${sender.name} <${sender.email}>`,
         to,
-        subject : "Welcome to the Synk",
-        html: createWelcomeEmailTemplate(name, clientURL)
-    })
+        subject,
+        html
+    });
 
-    if (error ){
-        console.error("Error sending the welcome message")
-        throw new ApiError()
+    if (error) {
+        console.error("Resend Error:", error);
+        throw new Error("Email sending failed");
     }
 
-    console.log("Welcome Email Sent Successfully")
+    return data;
 };
+
+export const sendWelcomeEmail = async ({ to, name, clientURL }) => {
+    const data = await sendEmail({
+        to,
+        subject: "Welcome to Synk",
+        html : createWelcomeEmailTemplate ,
+    });
+
+    console.log("Welcome Email Sent Successfully")
+
+    return data;
+};
+
+// TODO: add reset password 
+// export const sendForgotPasswordEmail = async ({ to, name, resetURL }) => {
+//     const html = forgotPasswordEmailTemplate(name, resetURL);
+
+//     const data = await sendEmail({
+//         to,
+//         subject: "Reset Your Password",
+//         html
+//     });
+
+//     console.log("✅ Reset Password Email Sent");
+
+//     return data;
+// };
