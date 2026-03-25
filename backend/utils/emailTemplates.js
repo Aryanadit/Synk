@@ -146,3 +146,90 @@ export function createWelcomeEmailTemplate(name, clientURL) {
     </html>
     `;
 }
+//TODO: reset passwordTemplate
+// export function forgotPasswordEmailTemplate(name, resetURL) {
+//     return `
+//     <!DOCTYPE html>
+//     <html>
+//     <head>
+//         <meta charset="UTF-8">
+//         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//         <title>Reset Password</title>
+//     </head>
+
+//     <body style="margin:0; padding:0; background-color:#F8F9FB; font-family:Arial, sans-serif;">
+
+//     <!-- Preview Text -->
+//     <div style="display:none; max-height:0; overflow:hidden;">
+//         Reset your Synk password securely 🔐
+//     </div>
+
+//     <table width="100%" cellpadding="0" cellspacing="0">
+//         <tr>
+//             <td align="center" style="padding:24px;">
+
+//                 <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:16px;">
+
+//                     <!-- Header -->
+//                     <tr>
+//                         <td align="center" style="padding:32px; background:#FFF4F4;">
+//                             <h1 style="margin:0; color:#FF6B6B;">Password Reset</h1>
+//                         </td>
+//                     </tr>
+
+//                     <!-- Content -->
+//                     <tr>
+//                         <td style="padding:24px;">
+//                             <p>Hello <strong>${name}</strong>,</p>
+
+//                             <p style="font-size:14px; line-height:1.6;">
+//                                 We received a request to reset your password. Click the button below to create a new one.
+//                             </p>
+
+//                             <!-- CTA -->
+//                             <div style="text-align:center; margin:24px 0;">
+//                                 <a href="${resetURL}" 
+//                                    style="background:#FF6B6B; color:#fff; padding:12px 24px; border-radius:6px; text-decoration:none; font-weight:bold;">
+//                                    Reset Password
+//                                 </a>
+//                             </div>
+
+//                             <!-- Security Note -->
+//                             <p style="font-size:13px; color:#777;">
+//                                 This link will expire in 10 minutes for security reasons.
+//                             </p>
+
+//                             <p style="font-size:13px; color:#777;">
+//                                 If you didn’t request this, you can safely ignore this email.
+//                             </p>
+
+//                             <!-- Fallback -->
+//                             <p style="font-size:12px; color:#999;">
+//                                 Or copy and paste this link:
+//                             </p>
+
+//                             <p style="font-size:12px; color:#999;">
+//                                 ${resetURL}
+//                             </p>
+
+//                             <p style="margin-top:16px;">— The Synk Team</p>
+//                         </td>
+//                     </tr>
+
+//                     <!-- Footer -->
+//                     <tr>
+//                         <td align="center" style="padding:16px; font-size:12px; color:#888; background:#F8F9FB;">
+//                             © 2026 Synk. All rights reserved.
+//                         </td>
+//                     </tr>
+
+//                 </table>
+
+//             </td>
+//         </tr>
+//     </table>
+
+//     </body>
+//     </html>
+//     `;
+// }

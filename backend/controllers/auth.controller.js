@@ -1,10 +1,11 @@
 import User from '../models/user.model.js'
 
-import { ApiError, ApiResponse, asyncHandler , generateToken ,createWelcomeEmailTemplate } from "../utils/index.js"
+import { ApiError, ApiResponse, asyncHandler , generateToken } from "../utils/index.js"
 
 import { uploadMedia , deleteMedia } from '../services/media.service.js'
 import { sendWelcomeEmail } from "../services/email.service.js";
 
+//TODO: add forgot password controller, template and email service already created 
 
 export const login = asyncHandler(async (req, res) => {
 
@@ -68,12 +69,15 @@ export const signup = asyncHandler(async (req, res) => {
 
     generateToken(newUser._id, res)
 
-    await sendWelcomeEmail({
+    try{
+        await sendWelcomeEmail({
         to: newUser.email,
         name: newUser.fullName,
         clientURL: process.env.CLIENT_URL
-    }).catch(err => console.log("Email failed:", err.message));
-
+    })}
+    catch (err) {
+        throw new ApiError(500, err.message);
+    }
     return res.status(201).json(
         new ApiResponse(201, "User created Successfully", {
             _id: newUser._id,
