@@ -1,32 +1,49 @@
+import {useEffect} from 'react'
 import { Routes, Route } from "react-router"
+import { Toaster } from "react-hot-toast";
+
 import ChatPage from "./pages/ChatPage.jsx"
 import LoginPage from "./pages/LoginPage.jsx"
 import SignUpPage from "./pages/SignUpPage.jsx"
 
 import { useAuthStore } from './store/useAuthStore.js'
 
+import PageLoader from "./components/PageLoader.jsx"
+import PublicRoute from "./components/PublicRoute.jsx"
+import ProtectedRoute from "./components/ProtectedRoute.jsx"
+
 export default function App() {
 
-  const authUser = useAuthStore((state) => state.authUser);
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const login = useAuthStore((state) => state.login);
+  const { authUser,isCheckingAuth,checkAuth} = useAuthStore() ; 
 
-  console.log("auth user:", authUser);
-  console.log("isLoggedIn:", isLoggedIn);
+  useEffect( () => {
+    checkAuth()
+  } , [checkAuth])
+  console.log({authUser})
 
+  if(isCheckingAuth ) return <PageLoader/>
   return (
     <div className="min-h-screen bg-base-100 text-base-content antialiased">
-
-      {/* temporary test button */}
-      <button className="text-sm text-base-content/70 hover:text-base-content transition">
-  Login
-</button>
-
       <div className="h-screen w-full">
+      <Toaster position="top-center" />
         <Routes>
-          <Route path="/" element={<ChatPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/" element={
+            <ProtectedRoute>
+              <ChatPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/login" element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          } />
+
+          <Route path="/signup" element={
+            <PublicRoute>
+              <SignUpPage />
+            </PublicRoute>
+          } />
         </Routes>
       </div>
 

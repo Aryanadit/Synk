@@ -20,14 +20,14 @@ const sendEmail = async ({ to, subject, html }) => {
 };
 
 export const sendWelcomeEmail = async ({ to, name, clientURL }) => {
+    const html = createWelcomeEmailTemplate(name, clientURL);
+
     const data = await sendEmail({
         to,
         subject: "Welcome to Synk",
-        html : createWelcomeEmailTemplate ,
+        html
     });
-
-    console.log("Welcome Email Sent Successfully")
-
+    console.log("Welcome Email Sent Successfully");
     return data;
 };
 

@@ -67,17 +67,20 @@ export const signup = asyncHandler(async (req, res) => {
 
     await newUser.save()
 
+    console.log("User created:", newUser.email);
+
     generateToken(newUser._id, res)
 
-    try{
+    try {
         await sendWelcomeEmail({
-        to: newUser.email,
-        name: newUser.fullName,
-        clientURL: process.env.CLIENT_URL
-    })}
-    catch (err) {
-        throw new ApiError(500, err.message);
+            to: newUser.email,
+            name: newUser.fullName,
+            clientURL: process.env.CLIENT_URL
+        });
+    } catch (err) {
+        console.error("Email failed:", err.message);
     }
+
     return res.status(201).json(
         new ApiResponse(201, "User created Successfully", {
             _id: newUser._id,
