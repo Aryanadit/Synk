@@ -7,7 +7,7 @@ const protectRoute = asyncHandler(async (req, res, next) => {
     const token = req.cookies.jwt
 
     if (!token) {
-        throw new ApiError(401, "Unauthorized: No token provided")
+        throw new ApiError(401, "Unauthorized");
     }
 
     let decoded
