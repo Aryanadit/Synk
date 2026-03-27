@@ -12,13 +12,14 @@ import PageLoader from "./components/PageLoader.jsx"
 import PublicRoute from "./components/PublicRoute.jsx"
 import ProtectedRoute from "./components/ProtectedRoute.jsx"
 
-export default function App() {
+function App() {
 
   const { authUser,isCheckingAuth,checkAuth} = useAuthStore() ; 
 
   useEffect( () => {
     checkAuth()
-  } , [checkAuth])
+  } , [])
+
   console.log({authUser})
 
   if(isCheckingAuth ) return <PageLoader/>
@@ -50,3 +51,6 @@ export default function App() {
     </div>
   )
 }
+
+
+export default App ; 

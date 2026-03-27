@@ -1,10 +1,13 @@
 export const errorHandler = (err, req, res, next) => {
-    console.error(err)
+    const statusCode = err.statusCode || 500;
 
-    const statusCode = err.statusCode || 500
+    // Only log server errors
+    if (statusCode >= 500) {
+        console.error("🔥 Server Error:", err);
+    }
 
     res.status(statusCode).json({
         success: false,
-        message: err.message || "Internal Server Error"
-    })
-}
+        message: err.message || "Something went wrong",
+    });
+};
