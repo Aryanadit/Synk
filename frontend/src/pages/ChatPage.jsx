@@ -12,6 +12,7 @@ import NoConversationPlaceholder from "../components/NoConversationPlaceholder.j
 function ChatPage() {
   const activeTab = useChatStore((state) => state.activeTab)
   const selectedUser = useChatStore((state) => state.selectedUser)
+  console.log("SELECTED USER:", selectedUser);
 
   return (
     <AppContainer>
