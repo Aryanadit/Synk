@@ -38,28 +38,28 @@ function ChatContainer() {
       {/* Header */}
       <ChatHeader />
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-8 py-8">
+      {/* Messages — full width of panel; tight right inset for sent bubbles */}
+      <div className="flex-1 min-h-0 w-full overflow-y-auto py-4 pl-4 pr-2 sm:pr-3">
 
         {messages.length > 0 && !isMessagesLoading ? (
 
-          <div className="max-w-2xl mx-auto space-y-4">
+          <div className="w-full space-y-3">
 
             {messages.map((msg) => (
               <div
                 key={msg._id}
-                className={`flex ${
-                  msg.senderId === authUser._id
+                className={`flex w-full ${
+                  String(msg.senderId) === String(authUser._id)
                     ? "justify-end"
                     : "justify-start"
                 }`}
               >
-                <div className="group max-w-md text-sm leading-relaxed text-slate-200">
+                <div className="group w-fit max-w-[min(36rem,88%)] text-sm leading-relaxed text-base-content">
 
                   {/* Image */}
-                  {msg.image && (
+                  {msg.image?.url && (
                     <img
-                      src={msg.image}
+                      src={msg.image.url}
                       alt="Shared"
                       className="rounded-lg mb-2 max-h-60 object-cover"
                     />
@@ -69,7 +69,7 @@ function ChatContainer() {
                   {msg.text && <p>{msg.text}</p>}
 
                   {/* Timestamp (hover reveal) */}
-                  <p className="text-[11px] mt-1 text-slate-500 opacity-0 group-hover:opacity-100 transition">
+                  <p className="text-[11px] mt-1 text-base-content/50 opacity-0 group-hover:opacity-100 transition">
                     {new Date(msg.createdAt).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",

@@ -1,7 +1,28 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: dark --default, light;
+}
+
+/*
+ * Deeper “ink” dark mode — default DaisyUI dark is ~25% grey-blue.
+ * These overrides keep data-theme="dark" but push surfaces toward true black.
+ */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-base-100: oklch(8% 0.012 264);
+  --color-base-200: oklch(13% 0.014 264);
+  --color-base-300: oklch(19% 0.016 264);
+  --color-base-content: oklch(96% 0.02 264);
+  --color-neutral: oklch(12% 0.01 264);
+  --color-neutral-content: oklch(93% 0.02 264);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
 
 body {
-  background: black;
-  color: white;
+  @apply bg-base-100 text-base-content antialiased;
 }

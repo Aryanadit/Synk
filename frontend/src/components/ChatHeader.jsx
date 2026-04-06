@@ -16,7 +16,7 @@ function ChatHeader() {
     }, []);
 
     return (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-base-200/60">
+        <div className="flex items-center justify-between border-b border-base-200/60 px-4 py-4 pr-2 sm:pr-3">
         
         {/* LEFT */}
         <div className="flex items-center gap-3">
