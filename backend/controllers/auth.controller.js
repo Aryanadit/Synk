@@ -1,147 +1,148 @@
-import User from '../models/user.model.js'
+import User from "../models/user.model.js";
 
-import { ApiError, ApiResponse, asyncHandler , generateToken } from "../utils/index.js"
+import {
+  ApiError,
+  ApiResponse,
+  asyncHandler,
+  generateToken,
+} from "../utils/index.js";
 
-import { uploadMedia , deleteMedia } from '../services/media.service.js'
+import { uploadMedia, deleteMedia } from "../services/media.service.js";
 import { sendWelcomeEmail } from "../services/email.service.js";
 
-//TODO: add forgot password controller, template and email service already created 
+//TODO: add forgot password controller, template and email service already created
 
 export const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    const { email, password } = req.body;
+  if (!email || !password) {
+    throw new ApiError(400, "Email and Password are required");
+  }
 
-    if (!email || !password) {
-        throw new ApiError(400, "Email and Password are required")
-    }
+  const existingUser = await User.findOne({ email });
 
-    const existingUser = await User.findOne({ email });
+  if (!existingUser) {
+    throw new ApiError(400, "Invalid Credentials");
+  }
 
-    if (!existingUser) {
-        throw new ApiError(400, "Invalid Credentials")
-    }
+  const isPasswordCorrect = await existingUser.comparePassword(password);
 
-    const isPasswordCorrect = await existingUser.comparePassword(password);
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Invalid Credentials");
+  }
 
-    if (!isPasswordCorrect) {
-        throw new ApiError(400, "Invalid Credentials")
-    }
+  generateToken(existingUser._id, res);
 
-    generateToken(existingUser._id, res)
-
-    return res.status(200).json(
-        new ApiResponse(200, "Login Successful", {
-            _id: existingUser._id,
-            email: existingUser.email,
-            fullName: existingUser.fullName,
-            profilePic: existingUser.profilePic
-        })
-    )
-})
+  return res.status(200).json(
+    new ApiResponse(200, "Login Successful", {
+      _id: existingUser._id,
+      email: existingUser.email,
+      fullName: existingUser.fullName,
+      profilePic: existingUser.profilePic,
+    }),
+  );
+});
 
 export const signup = asyncHandler(async (req, res) => {
+  const { fullName, email, password } = req.body;
 
-    const { fullName, email, password } = req.body;
+  if (!fullName || !email || !password) {
+    throw new ApiError(400, "All fields are required");
+  }
 
-    if (!fullName || !email || !password) {
-        throw new ApiError(400, "All fields are required")
-    }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new ApiError(400, "Invalid Email Format");
+  }
 
-    if (!emailRegex.test(email)) {
-        throw new ApiError(400, "Invalid Email Format")
-    }
+  const existingUser = await User.findOne({ email });
 
-    const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new ApiError(400, "User already Exists");
+  }
 
-    if (existingUser) {
-        throw new ApiError(400, "User already Exists")
-    }
+  const newUser = new User({
+    fullName,
+    email,
+    password,
+  });
 
-    const newUser = new User({
-        fullName,
-        email,
-        password
-    })
+  await newUser.save();
 
-    await newUser.save()
+  console.log("User created:", newUser.email);
 
-    console.log("User created:", newUser.email);
+  generateToken(newUser._id, res);
 
-    generateToken(newUser._id, res)
+  try {
+    await sendWelcomeEmail({
+      to: newUser.email,
+      name: newUser.fullName,
+      clientURL: process.env.CLIENT_URL,
+    });
+  } catch (err) {
+    console.error("Email failed:", err.message);
+  }
 
-    try {
-        await sendWelcomeEmail({
-            to: newUser.email,
-            name: newUser.fullName,
-            clientURL: process.env.CLIENT_URL
-        });
-    } catch (err) {
-        console.error("Email failed:", err.message);
-    }
-
-    return res.status(201).json(
-        new ApiResponse(201, "User created Successfully", {
-            _id: newUser._id,
-            email: newUser.email,
-            fullName: newUser.fullName,
-            profilePic: newUser.profilePic
-        })
-    )
-})
+  return res.status(201).json(
+    new ApiResponse(201, "User created Successfully", {
+      _id: newUser._id,
+      email: newUser.email,
+      fullName: newUser.fullName,
+      profilePic: newUser.profilePic,
+    }),
+  );
+});
 
 export const logout = asyncHandler(async (req, res) => {
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "lax",
+  });
 
-    res.clearCookie("jwt", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-        sameSite: "strict"
-    })
+  return res.status(200).json(new ApiResponse(200, "Logout Successful"));
+});
 
-    return res.status(200).json(
-        new ApiResponse(200, "Logout Successful")
-    )
-})
+export const updateProfile = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
 
-export const updateProfile = asyncHandler( async( req ,res ) => {
-    const userId = req.user._id;
+  const user = await User.findById(userId);
 
-    const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
 
-    if (!user) {
-        throw new ApiError(404, "User not found");
+  let newProfilePic;
+
+  if (req.file?.path) {
+    try {
+      newProfilePic = await uploadMedia(req.file.path, "profile-pics");
+    } catch (error) {
+      throw new ApiError(500, "Profile upload failed");
     }
 
-    let newProfilePic;
-
-    if( req.file?.path){
-        try {
-            newProfilePic = await uploadMedia(req.file.path, "profile-pics");
-        } catch (error) {
-            throw new ApiError(500, "Profile upload failed");
-        }
-
-        console.log("newProfilePic" , newProfilePic)
-        if (user.profilePic?.public_id) {
-            await deleteMedia(user.profilePic.public_id);
-        }
+    console.log("newProfilePic", newProfilePic);
+    if (user.profilePic?.public_id) {
+      await deleteMedia(user.profilePic.public_id);
     }
+  }
 
-    if (newProfilePic) {
-        user.profilePic = {
-            url: newProfilePic.url,
-            public_id: newProfilePic.public_id
-        };
-    }
+  if (newProfilePic) {
+    user.profilePic = {
+      url: newProfilePic.url,
+      public_id: newProfilePic.public_id,
+    };
+  }
 
+  await user.save();
 
-    await user.save();
+  const safeUser = user.toObject();
+  delete safeUser.password;
 
-    const safeUser = user.toObject();
-    delete safeUser.password;
-
-    return res.status(200).json(
-        new ApiResponse(200, "Profile picture updated successfully" , safeUser )
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, "Profile picture updated successfully", safeUser),
     );
-})
+});

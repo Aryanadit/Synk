@@ -1,7 +1,7 @@
 export default function AppContainer({ children }) {
-    return (
-        <div className="max-w-5xl mx-auto h-screen px-6 border-x border-base-300/30">
-        {children}
-        </div>
-    );
+  return (
+    <div className="flex h-screen w-full min-w-0 flex-col overflow-hidden bg-base-100">
+      {children}
+    </div>
+  );
 }
