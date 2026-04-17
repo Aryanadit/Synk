@@ -26,6 +26,9 @@ function MessageInput() {
   const onFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+
     setImageFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   };
@@ -41,10 +44,15 @@ function MessageInput() {
     const trimmed = text.trim();
     if (!trimmed && !imageFile) return;
 
-    await sendMessage({ text: trimmed, imageFile: imageFile ?? undefined });
-    setText("");
-    clearAttachment();
-    textareaRef.current?.focus();
+    try {
+      await sendMessage({ text: trimmed, imageFile: imageFile ?? undefined });
+      setText("");
+      clearAttachment();
+      textareaRef.current?.focus();
+    } catch (err) {
+      console.error("Failed to send message", err);
+      // optional: toast later
+    }
   };
 
   const onKeyDown = (e) => {

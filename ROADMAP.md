@@ -74,3 +74,4 @@ This document captures a **priority-ordered** plan to finish core chat features,
 - Prefer **one big learning thread per sprint** (e.g. don’t combine full GraphQL rewrite + AI + Redis in the same week).
 
 Last updated from project analysis — adjust dates and checkboxes as you complete work.
+  

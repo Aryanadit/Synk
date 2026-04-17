@@ -2,6 +2,7 @@ import "./config/env.js";
 import cors from "cors";
 import express from "express";
 import cookieParser from "cookie-parser";
+import http from "http"; // ✅ IMPORTANT
 
 import protectRoute from "./middlewares/auth.middleware.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
@@ -12,11 +13,16 @@ import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 
 import connectToMongoDB from "./config/db.js";
+import { initSocket } from "./socket/socket.js"; // ✅ ADD THIS
+
 console.log("CLIENT_URL:", process.env.CLIENT_URL);
 
-// Default 5050: macOS uses 5000 for AirPlay Receiver (Control Center), which breaks local API.
 const PORT = process.env.PORT || 5050;
+
 const app = express();
+
+// 🔥 CREATE HTTP SERVER
+const server = http.createServer(app);
 
 app.use(
   cors({
@@ -24,6 +30,7 @@ app.use(
     credentials: true,
   }),
 );
+
 app.use(globalLimiter);
 app.use(express.json());
 app.use(cookieParser());
@@ -34,7 +41,14 @@ app.use("/api/users", userRoutes);
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+// 🔥 INITIALIZE SOCKET HERE
+initSocket(server);
+
+// ❌ REMOVE app.listen
+// app.listen(PORT, () => {})
+
+// ✅ USE server.listen INSTEAD
+server.listen(PORT, () => {
   connectToMongoDB();
   console.log(`Server is running on port ${PORT}`);
 });
