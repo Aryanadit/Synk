@@ -1,11 +1,11 @@
 # Synk
 
 <p align="center">
-  <img src="frontend/public/assets/logo-light.png" alt="Synk logo" height="72" />
+  <img src="frontend/public/assets/logo-dark.png" alt="Synk logo" height="72" />
 </p>
 
 <p align="center">
-  A calm, minimal real-time chat app with authentication, online presence, and media sharing.
+  A minimal, real-time chat application designed for calm, distraction-free communication.
 </p>
 
 <p align="center">
@@ -21,6 +21,18 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Socket.IO](https://img.shields.io/badge/Socket.IO-Realtime-010101?style=for-the-badge&logo=socket.io&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white)
+
+## 🧠 Why Synk?
+
+Most chat applications prioritize features over experience — resulting in noisy, cluttered interfaces.
+
+Synk takes a different approach:
+
+- Calm, distraction-free UI (inspired by Notion & Linear)
+- Minimal interaction, maximum clarity
+- Real-time communication without visual overload
+
+> The goal: make messaging feel like reading, not reacting.
 
 ## ✨ Features
 
@@ -48,6 +60,13 @@
 ### Chat Area
 
 ![Chat Area](images/ChatArea.png)
+
+### Flow Summary
+
+- Client authenticates → receives JWT (cookie)
+- REST APIs handle auth, users, messages
+- Socket.IO handles real-time messaging + online users
+- Media uploads: Multer → Cloudinary
 
 ## 🚀 Tech Stack
 
