@@ -10,39 +10,35 @@ function AppHeader() {
   return (
     <header className="bg-base-100 text-base-content">
       <div className="flex items-center justify-between px-6 py-3">
-        <div className="flex items-center">
-          <img
-            src={
-              theme === "dark"
-                ? "/assets/logo-dark.png"
-                : "/assets/logo-light.png"
-            }
-            alt="Synk"
-            className="h-8 object-contain"
-          />
-        </div>
+        {/* Logo */}
+        <img
+          src={
+            theme === "dark"
+              ? "/assets/logo-dark.png"
+              : "/assets/logo-light.png"
+          }
+          alt="Synk"
+          className="h-8 object-contain"
+        />
 
+        {/* Actions */}
         <div className="flex items-center gap-2">
           <button
-            type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-md text-base-content/50 hover:text-base-content hover:bg-base-200/50 transition-colors"
-            aria-label="Toggle theme"
-            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            className="p-2 rounded-md text-base-content/50 hover:text-base-content hover:bg-base-200/50 transition"
           >
             {theme === "dark" ? (
-              <Sun className="size-4" aria-hidden />
+              <Sun className="size-4" />
             ) : (
-              <Moon className="size-4" aria-hidden />
+              <Moon className="size-4" />
             )}
           </button>
+
           <button
-            type="button"
             onClick={logout}
-            className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition hover:bg-base-200/50"
+            className="p-2 rounded-md text-base-content/50 hover:text-base-content hover:bg-base-200/50 transition"
           >
-            <LogOut className="size-4" aria-hidden />
-            Logout
+            <LogOut className="size-4" />
           </button>
         </div>
       </div>

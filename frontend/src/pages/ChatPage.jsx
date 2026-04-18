@@ -4,6 +4,7 @@ import { useChatStore } from "../store/useChatStore.js";
 
 import AppContainer from "../components/AppContainer.jsx";
 import AppHeader from "../components/AppHeader.jsx";
+import ProfileHeader from "../components/ProfileHeader.jsx";
 import ActiveTabSwitch from "../components/ActiveTabSwitch.jsx";
 import ChatList from "../components/ChatList.jsx";
 import ContactList from "../components/ContactList.jsx";
@@ -43,6 +44,7 @@ function ChatPage() {
         <div className="flex flex-1 overflow-hidden">
           {/* 🔹 LEFT SIDEBAR */}
           <div className="w-80 flex flex-col border-r border-base-200/60">
+          <ProfileHeader /> 
             <ActiveTabSwitch />
 
             <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">

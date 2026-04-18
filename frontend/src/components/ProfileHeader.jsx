@@ -1,12 +1,11 @@
 import { useState, useRef } from "react";
-import { LogOutIcon, VolumeOffIcon, Volume2Icon, Camera } from "lucide-react";
+import { Camera, VolumeOffIcon, Volume2Icon } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 
 const mouseClickSound = new Audio("/sounds/mouse-click.mp3");
 
 function ProfileHeader() {
-  const logout = useAuthStore((state) => state.logout);
   const authUser = useAuthStore((state) => state.authUser);
   const updateProfilePic = useAuthStore((state) => state.updateProfilePic);
   const isUpdatingProfile = useAuthStore((state) => state.isUpdatingProfile);
@@ -28,26 +27,11 @@ function ProfileHeader() {
   };
 
   return (
-    <div className="px-4 py-4 space-y-4">
-      {/* 🔷 BRANDING */}
-      <div className="flex items-center gap-2">
-        {/* If you want to use your logo instead of S, replace below */}
-        {/* Example: <img src="/assets/logo.png" className="w-6 h-6" /> */}
-
-        <div className="w-6 h-6 rounded-md bg-neutral-900 text-white flex items-center justify-center text-xs font-medium">
-          S
-        </div>
-
-        <span className="text-sm font-medium tracking-tight text-base-content">
-          Synk
-        </span>
-      </div>
-
-      {/* 🔷 PROFILE HEADER */}
+    <div className="px-4 py-4">
       <div className="flex items-center justify-between">
-        {/* LEFT */}
+        {/* 🔷 LEFT — PROFILE */}
         <div className="flex items-center gap-3">
-          {/* AVATAR */}
+          {/* Avatar */}
           <div
             className="relative group cursor-pointer"
             onClick={() => fileInputRef.current.click()}
@@ -55,19 +39,20 @@ function ProfileHeader() {
             <img
               src={preview || authUser?.profilePic?.url || "/avatar.png"}
               alt={authUser?.fullName || "User"}
-              className={`w-11 h-11 rounded-full object-cover transition ${
+              className={`w-10 h-10 rounded-full object-cover transition ${
                 isUpdatingProfile ? "opacity-60" : ""
               }`}
             />
 
-            {/* subtle hover */}
+            {/* Hover overlay */}
             <div className="absolute inset-0 rounded-full bg-black/20 opacity-0 group-hover:opacity-100 transition" />
 
-            {/* camera icon */}
+            {/* Camera icon */}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
               <Camera className="size-4 text-white/90" />
             </div>
 
+            {/* Loading spinner */}
             {isUpdatingProfile && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-4 h-4 border border-white/50 border-t-transparent rounded-full animate-spin" />
@@ -83,39 +68,29 @@ function ProfileHeader() {
             className="hidden"
           />
 
-          {/* USER INFO */}
+          {/* Name */}
           <div className="leading-tight">
-            <h3 className="text-sm font-medium max-w-40 truncate">
+            <p className="text-sm font-medium max-w-[140px] truncate">
               {authUser?.fullName}
-            </h3>
-            <p className="text-xs text-base-content/50">Online</p>
+            </p>
           </div>
         </div>
 
-        {/* RIGHT ACTIONS */}
-        <div className="flex items-center gap-2">
-          <button
-            className="p-2 rounded-md text-base-content/50 hover:text-base-content hover:bg-neutral-100 transition"
-            onClick={logout}
-          >
-            <LogOutIcon className="size-4" />
-          </button>
-
-          <button
-            className="p-2 rounded-md text-base-content/50 hover:text-base-content hover:bg-neutral-100 transition"
-            onClick={() => {
-              mouseClickSound.currentTime = 0;
-              mouseClickSound.play().catch(() => {});
-              toggleSound();
-            }}
-          >
-            {isSoundEnabled ? (
-              <Volume2Icon className="size-4" />
-            ) : (
-              <VolumeOffIcon className="size-4" />
-            )}
-          </button>
-        </div>
+        {/* 🔷 RIGHT — SOUND ONLY */}
+        <button
+          className="p-2 rounded-md text-base-content/50 hover:text-base-content hover:bg-base-200/50 transition"
+          onClick={() => {
+            mouseClickSound.currentTime = 0;
+            mouseClickSound.play().catch(() => {});
+            toggleSound();
+          }}
+        >
+          {isSoundEnabled ? (
+            <Volume2Icon className="size-4" />
+          ) : (
+            <VolumeOffIcon className="size-4" />
+          )}
+        </button>
       </div>
     </div>
   );
