@@ -13,7 +13,7 @@ import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 
 import connectToMongoDB from "./config/db.js";
-import { initSocket } from "./socket/socket.js"; // ✅ ADD THIS
+import { initSocket } from "./socket/socket.js";
 
 console.log("CLIENT_URL:", process.env.CLIENT_URL);
 
@@ -26,7 +26,7 @@ const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
 );
