@@ -1,10 +1,13 @@
 import { XIcon } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
 import { useEffect } from "react";
+import { useSocketStore } from "../store/useSocketStore.js";
+import { formatLastSeen } from "../lib/formatLastSeen.js";
 
 function ChatHeader() {
   const selectedUser = useChatStore((state) => state.selectedUser);
   const setSelectedUser = useChatStore((state) => state.setSelectedUser);
+  const onlineUsers = useSocketStore((state) => state.onlineUsers);
 
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -20,7 +23,7 @@ function ChatHeader() {
       {/* LEFT */}
       <div className="flex items-center gap-3">
         {/* Avatar */}
-        <div className="w-9 h-9 rounded-full overflow-hidden">
+        <div className="relative w-9 h-9 rounded-full overflow-hidden">
           <img
             src={selectedUser?.profilePic?.url || "/avatar.png"}
             alt={selectedUser?.fullName}
@@ -34,7 +37,18 @@ function ChatHeader() {
             {selectedUser?.fullName}
           </h3>
 
-          <p className="text-xs text-base-content/50">Online</p>
+          <p className="text-xs text-base-content/55 flex items-center gap-2">
+            <span className="font-medium text-base-content/70">
+              {selectedUser && onlineUsers.includes(selectedUser._id)
+                ? "Online"
+                : "Offline"}
+            </span>
+            <span className="text-base-content/45">
+              {selectedUser && onlineUsers.includes(selectedUser._id)
+                ? "• active now"
+                : formatLastSeen(selectedUser?.lastSeen)}
+            </span>
+          </p>
         </div>
       </div>
 
