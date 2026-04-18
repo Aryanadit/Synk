@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/useAuthStore.js";
 import { useChatStore } from "../store/useChatStore.js";
 
 import AppContainer from "../components/AppContainer.jsx";
-import ProfileHeader from "../components/ProfileHeader.jsx";
+import AppHeader from "../components/AppHeader.jsx";
 import ActiveTabSwitch from "../components/ActiveTabSwitch.jsx";
 import ChatList from "../components/ChatList.jsx";
 import ContactList from "../components/ContactList.jsx";
@@ -37,20 +37,23 @@ function ChatPage() {
 
   return (
     <AppContainer>
-      <div className="flex h-full">
-        {/* 🔹 LEFT SIDEBAR */}
-        <div className="w-80 flex flex-col border-r border-base-300">
-          <ProfileHeader />
-          <ActiveTabSwitch />
+      <div className="h-full flex flex-col">
+        <AppHeader />
 
-          <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
-            {activeTab === "chats" ? <ChatList /> : <ContactList />}
+        <div className="flex flex-1 overflow-hidden">
+          {/* 🔹 LEFT SIDEBAR */}
+          <div className="w-80 flex flex-col border-r border-base-200/60">
+            <ActiveTabSwitch />
+
+            <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
+              {activeTab === "chats" ? <ChatList /> : <ContactList />}
+            </div>
           </div>
-        </div>
 
-        {/* 🔹 RIGHT PANEL */}
-        <div className="flex-1 flex flex-col">
-          {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
+          {/* 🔹 RIGHT PANEL */}
+          <div className="flex-1 flex flex-col min-w-0">
+            {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
+          </div>
         </div>
       </div>
     </AppContainer>

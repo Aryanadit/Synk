@@ -11,7 +11,6 @@ import { useAuthStore } from './store/useAuthStore.js'
 import PageLoader from "./components/PageLoader.jsx"
 import PublicRoute from "./components/PublicRoute.jsx"
 import ProtectedRoute from "./components/ProtectedRoute.jsx"
-import ThemeToggle from "./components/ThemeToggle.jsx"
 
 function App() {
 
@@ -26,13 +25,11 @@ function App() {
   if (isCheckingAuth)
     return (
       <>
-        <ThemeToggle />
         <PageLoader />
       </>
     );
   return (
     <div className="min-h-screen bg-base-100 text-base-content antialiased">
-      <ThemeToggle />
       <div className="h-screen w-full">
       <Toaster position="top-center" />
         <Routes>
