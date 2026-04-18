@@ -41,29 +41,34 @@ export const sendMessage = asyncHandler(async (req, res) => {
   const { id: receiverId } = req.params;
   const senderId = req.user._id;
 
-  let imageData;
+  let imageData = null;
 
-  if (req.file?.path) {
+  // 🔥 Handle file upload using buffer (NEW WAY)
+  if (req.file) {
     try {
-      imageData = await uploadMedia(req.file.path, "messages");
+      imageData = await uploadMedia(req.file.buffer, "messages");
     } catch (error) {
+      console.error("Upload error:", error);
       throw new ApiError(500, "File upload failed");
     }
   }
 
+  // 🔥 Allow either text OR image
   if (!text?.trim() && !imageData) {
     throw new ApiError(400, "Empty message cannot be sent");
   }
 
+  // 🔍 Check receiver
   const receiver = await User.findById(receiverId);
   if (!receiver) {
     throw new ApiError(404, "Receiver not found");
   }
 
+  // 📝 Create message
   const newMessage = await Message.create({
     senderId,
     receiverId,
-    text,
+    text: text?.trim() || "",
     image: imageData
       ? {
           url: imageData.url,
@@ -72,17 +77,15 @@ export const sendMessage = asyncHandler(async (req, res) => {
       : null,
   });
 
+  // 🔌 Socket logic (unchanged)
   const io = getIO();
-  const receiverSockets = getUserSockets(receiverId.toString());
 
-  if (receiverSockets.length > 0) {
-    receiverSockets.forEach((socketId) => {
-      io.to(socketId).emit("newMessage", newMessage);
-    });
-  }
+  const receiverSockets = getUserSockets(receiverId.toString());
+  receiverSockets.forEach((socketId) => {
+    io.to(socketId).emit("newMessage", newMessage);
+  });
 
   const senderSockets = getUserSockets(senderId.toString());
-
   senderSockets.forEach((socketId) => {
     io.to(socketId).emit("newMessage", newMessage);
   });
