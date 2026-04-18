@@ -81,7 +81,7 @@ export const useChatStore = create((set, get) => ({
 
     const formData = new FormData();
     if (trimmed) formData.append("text", trimmed);
-    if (imageFile) formData.append("image", imageFile);
+    if (imageFile) formData.append("file", imageFile);
 
     set({ isSendingMessage: true });
     try {
