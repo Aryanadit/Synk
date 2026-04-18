@@ -1,54 +1,235 @@
 # Synk
 
-A calm, minimal real-time chat app with authentication, online presence, image uploads, and a distraction-free UI.
+<p align="center">
+  <img src="frontend/public/assets/logo-light.png" alt="Synk logo" height="72" />
+</p>
 
-- **Repo**: `https://github.com/Aryanadit/Synk`
-- **Live demo**: `https://synk-frontend-five.vercel.app/`
+<p align="center">
+  A calm, minimal real-time chat app with authentication, online presence, and media sharing.
+</p>
 
-## Screenshots
+<p align="center">
+  <a href="https://synk-frontend-five.vercel.app/">Live Demo</a>
+  ·
+  <a href="https://github.com/Aryanadit/Synk">GitHub</a>
+</p>
 
-![Main Page](images/MainPage.png)
-![Login](images/login.png)
-![Signup](images/signup.png)
+![React](https://img.shields.io/badge/React-19-149ECA?style=for-the-badge&logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-Realtime-010101?style=for-the-badge&logo=socket.io&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white)
+
+## ✨ Features
+
+- **Authentication**: signup, login, logout (JWT in **httpOnly cookies**)
+- **Protected routes**: chat is only accessible after login
+- **Real-time messaging**: Socket.IO message events + online users
+- **Media sharing**: optional image attachment per message (Cloudinary)
+- **Email**: welcome email via Resend
+- **Security**: CORS with credentials + rate limiting (global + auth)
+
+## 📸 Screenshots
+
+### Landing / Main Screen
+
+![Landing / Main](images/MainPage.png)
+
+### Login
+
+![Login Screen](images/login.png)
+
+### Sign Up
+
+![Signup Screen](images/signup.png)
+
+### Chat Area
+
 ![Chat Area](images/ChatArea.png)
 
-## Features
-
-- **Auth**: signup, login, logout (JWT stored in **httpOnly cookie**)
-- **Protected chat**: only authenticated users can access `/`
-- **Real-time**: Socket.IO for online users + new message events
-- **Messaging**: text + optional image attachment
-- **Uploads**: media stored in Cloudinary (memory upload, no local filesystem)
-- **Email**: welcome email via Resend
-- **Security**: CORS + credentials, rate limiting on auth routes
-
-## Tech stack
+## 🚀 Tech Stack
 
 ### Frontend (`frontend/`)
 
-- React 19 + Vite
-- Zustand state management
-- Tailwind CSS v4 + DaisyUI
-- Socket.IO client
+- React + Vite
+- Zustand (state)
+- Tailwind CSS + DaisyUI
+- Socket.IO Client
+- Axios
 
 ### Backend (`backend/`)
 
-- Node.js + Express 5
+- Node.js + Express
 - MongoDB + Mongoose
-- Socket.IO
-- Cloudinary (uploads)
+- JWT auth (cookie-based)
+- Socket.IO (WebSockets)
+- Cloudinary uploads (memory upload via `multer`)
 - Resend (email)
 
-## Project structure
+## 📁 Folder Structure
 
 ```text
 Synk/
-  backend/   # Express + Mongo + Socket.IO API
-  frontend/  # React + Vite SPA
-  images/    # README screenshots
+  README.md
+  .gitignore
+  design_guidelines.txt
+  roadmap.md
+  images/
+    ChatArea.png
+    MainPage.png
+    login.png
+    signup.png
+
+  backend/
+    package.json
+    package-lock.json
+    server.js
+    config/
+      cloudinary.js
+      db.js
+      env.js
+      resend.js
+    constants/
+      socket.events.js
+    controllers/
+      auth.controller.js
+      message.controller.js
+      user.controller.js
+    middlewares/
+      auth.middleware.js
+      errorHandler.js
+      multer.middleware.js
+      rateLimiter.middleware.js
+      socket.auth.middleware.js
+    models/
+      message.model.js
+      user.model.js
+    routes/
+      auth.routes.js
+      message.routes.js
+      user.routers.js
+    services/
+      email.service.js
+      media.service.js
+    socket/
+      socket.events.js
+      socket.js
+      socket.manager.js
+    utils/
+      ApiError.js
+      ApiResponse.js
+      asyncHandler.js
+      emailTemplates.js
+      generateToken.js
+      index.js
+
+  frontend/
+    package.json
+    package-lock.json
+    eslint.config.js
+    vite.config.js
+    public/
+      avatar.png
+      assets/
+        LogoDark.png
+        LogoLight.png
+        logo-dark.png
+        logo-light.png
+        react.svg
+      sounds/
+        keystroke1.mp3
+        keystroke2.mp3
+        keystroke3.mp3
+        keystroke4.mp3
+        mouse-click.mp3
+        notification.mp3
+    src/
+      App.jsx
+      main.jsx
+      index.css
+      components/
+        ActiveTabSwitch.jsx
+        AppContainer.jsx
+        AppHeader.jsx
+        ChatContainer.jsx
+        ChatHeader.jsx
+        ChatList.jsx
+        ContactList.jsx
+        MessageInput.jsx
+        MessagesLoadingSkeleton.jsx
+        NoChatHistoryPlaceholder.jsx
+        NoChatsFound.jsx
+        NoConversationPlaceholder.jsx
+        PageLoader.jsx
+        ProfileHeader.jsx
+        ProtectedRoute.jsx
+        PublicRoute.jsx
+        ThemeToggle.jsx
+        UsersLoadingSkeleton.jsx
+      lib/
+        axios.js
+        theme.js
+      pages/
+        ChatPage.jsx
+        LoginPage.jsx
+        SignUpPage.jsx
+      store/
+        useAuthStore.js
+        useChatStore.js
+        useSocketStore.js
+        useThemeStore.js
 ```
 
-## API overview
+## 🔧 Environment Variables
+
+### Backend (`backend/.env`)
+
+- **`PORT`** (recommended `5050` to match the Vite dev proxy)
+- **`NODE_ENV`** (`development` / `production`)
+- **`CLIENT_URL`** (frontend origin; used for CORS + Socket.IO CORS)
+- **`MONGODB_URI`**
+- **`JWT_SECRET_KEY`**
+- **`CLOUDINARY_CLOUD_NAME`**
+- **`CLOUDINARY_API_KEY`**
+- **`CLOUDINARY_API_SECRET`**
+- **`RESEND_API_KEY`**
+- **`EMAIL_FROM`**
+- **`EMAIL_FROM_NAME`**
+
+### Frontend (`frontend/.env`)
+
+- **`VITE_API_URL`** (must include `/api`)
+  - Local: `http://localhost:5050/api`
+  - Prod: `https://your-backend-domain.com/api`
+
+## 🛠️ Local Setup
+
+### 1) Backend
+
+```bash
+cd backend
+npm install
+
+# Create backend/.env with the variables above
+npm run dev
+```
+
+### 2) Frontend
+
+```bash
+cd frontend
+npm install
+
+# Create frontend/.env
+# VITE_API_URL=http://localhost:5050/api
+npm run dev
+```
+
+Open `http://localhost:5173`.
+
+## 🧩 API Routes (Quick Reference)
 
 Base path is **`/api`**.
 
@@ -57,88 +238,20 @@ Base path is **`/api`**.
 - `POST /api/auth/signup`
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
-- `PATCH /api/auth/update-profile` (multipart form field: `profilePic`)
 - `GET /api/auth/check` (protected)
+- `PATCH /api/auth/update-profile` (protected, multipart: `profilePic`)
 
 ### Messages (protected)
 
 - `GET /api/messages/contacts`
 - `GET /api/messages/partners`
 - `GET /api/messages/user/:id`
-- `POST /api/messages/send/:id` (multipart form field: `file`, body field: `text`)
+- `POST /api/messages/send/:id` (multipart: `file`, body: `text`)
 
 ### Users
 
-- `GET /api/users` (protected; sidebar users)
+- `GET /api/users` (protected)
 
-## Environment variables
+## 📄 License
 
-This repo currently doesn’t include `.env.example` files, so here’s the full list inferred from the code.
-
-### Backend (`backend/.env`)
-
-- **`PORT`**: API port (recommended `5050` to match the Vite dev proxy)
-- **`NODE_ENV`**: `development` or `production`
-- **`CLIENT_URL`**: frontend origin for CORS (e.g. `http://localhost:5173`)
-- **`MONGODB_URI`**: Mongo connection string (Atlas recommended)
-- **`JWT_SECRET_KEY`**: JWT signing secret
-- **`CLOUDINARY_CLOUD_NAME`**
-- **`CLOUDINARY_API_KEY`**
-- **`CLOUDINARY_API_SECRET`**
-- **`RESEND_API_KEY`**
-- **`EMAIL_FROM`**: sender email address (must be verified in Resend)
-- **`EMAIL_FROM_NAME`**: sender display name
-
-### Frontend (`frontend/.env`)
-
-- **`VITE_API_URL`**: backend API base URL **including `/api`**
-  - Local example: `http://localhost:5050/api`
-  - Production example: `https://your-backend-domain.com/api`
-
-## Local development
-
-### 1) Backend
-
-```bash
-cd backend
-npm install
-
-# create backend/.env (see variables above)
-npm run dev
-```
-
-The server starts on `PORT` (defaults to `3000` in code, but Vite proxy expects `5050`).
-
-### 2) Frontend
-
-```bash
-cd frontend
-npm install
-
-# create frontend/.env
-# VITE_API_URL=http://localhost:5050/api
-npm run dev
-```
-
-Open the app at `http://localhost:5173`.
-
-## Deployment notes
-
-- **Frontend**: deploy the Vite build from `frontend/`.
-- **Backend**: deploy `backend/` as a Node service that supports WebSockets.
-- **Cookies + CORS**:
-  - Auth cookie is set as `sameSite: "none"` and `secure: true`, so **HTTPS is required**.
-  - Set `CLIENT_URL` to your deployed frontend origin.
-- **API URL**:
-  - Set `VITE_API_URL` to your deployed backend URL ending with `/api`.
-  - Socket.IO uses the same base, derived from `VITE_API_URL` (it strips `/api`).
-
-## Troubleshooting
-
-- **CORS / cookie not being set**: make sure you’re on HTTPS in production and `CLIENT_URL` exactly matches the deployed frontend origin.
-- **Frontend can’t reach backend in dev**: either set backend `PORT=5050` or update `frontend/vite.config.js` proxy target.
-
-## License
-
-ISC (as currently declared in `backend/package.json`).
-
+ISC (as declared in `backend/package.json`).
