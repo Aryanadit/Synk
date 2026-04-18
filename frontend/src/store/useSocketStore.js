@@ -21,6 +21,7 @@ export const useSocketStore = create((set, get) => ({
       console.log("Socket connected:", socket.id);
     });
 
+    socket.off("onlineUsers");
     socket.on("onlineUsers", (users) => {
       set({ onlineUsers: users });
     });
@@ -31,8 +32,9 @@ export const useSocketStore = create((set, get) => ({
   disconnectSocket: () => {
     const socket = get().socket;
     if (socket) {
+      socket.off("onlineUsers");
       socket.disconnect();
-      set({ socket: null });
+      set({ socket: null, onlineUsers: [] });
     }
   },
 }));
